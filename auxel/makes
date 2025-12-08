@@ -57,7 +57,7 @@ function raptor_disks_prep_boot_mono() {
     echo "set efi at linux only partition"
     raptor_disks_prep_boot_mgpt &&
     raptor_disks_prep_boot_make &&
-    raptor_disks_prep_boot_form &&
+    raptor_disks_prep_boot_form
 }
 
 
