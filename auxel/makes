@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## dualboot validator team # @Al Muhdil Karim <karim@yuros.org> @Fawaz Rifqi Frasetia <fras@yuros.org>
-function raptor_disks_prep_boot_vali() {
+function raptor_disks_prep_dual() {
 
     take_efipath=($(lsblk -o path,fstype | grep vfat | awk '{print $1}'))
 
@@ -21,6 +21,20 @@ function raptor_disks_prep_boot_vali() {
     done
 }
 
+function raptor_disks_prep_swip() {
+
+    if [[ -z $( lsblk | grep $efispath ) ]]&&[[ $dualboot == false ]];then
+
+        read -p "Do yout want swipe partition table : [y/N] " swipe_partition_table
+
+        if [[ $swipe_partition_table == "Y" ]]||[[ $swipe_partition_table == "y" ]];then
+            sudo parted -s $drivpath mklabel gpt
+        fi
+    fi
+}
+
+
+## BOOT PARTITION
 function raptor_disks_prep_boot_form() {
     echo "format boot path : $procpath"
     if [[ ! -z $( lsblk -o path | grep $bootpath ) ]];then
@@ -33,25 +47,12 @@ function raptor_disks_prep_boot_make() {
     echo "make boot path : $procpath"
     if [[ -z  $( lsblk -o path | grep $bootpath )  ]];then
         echo "create boot partition"
-        parted -s $drivpath mkpart primary ext4 1MiB 2000MiB
-    fi
-}
-
-function raptor_disks_prep_boot_mgpt() {
-
-    if [[ -z $( lsblk | grep $bootpath ) ]]&&[[ $dualboot == false ]];then
-
-        read -p "Do yout want swipe partition table : [y/N] " swipe_partition_table
-
-        if [[ $swipe_partition_table == "Y" ]]||[[ $swipe_partition_table == "y" ]];then
-            sudo parted -s $drivpath mklabel gpt
-        fi
+        parted -s $drivpath mkpart primary ext4 1MiB 1544MiB
     fi
 }
 
 function raptor_disks_prep_boot_mono() {
     echo "set efi at linux only partition"
-    raptor_disks_prep_boot_mgpt &&
     raptor_disks_prep_boot_make &&
     raptor_disks_prep_boot_form
 }
@@ -83,12 +84,37 @@ function raptor_disks_prep_boot() {
     fi
 }
 
+## EFI PARTITION
+function raptor_disks_prep_efis_make() {
+
+    echo "make efi path : $efispath"
+    if [[ -z  $( lsblk -o path | grep $efispath )  ]];then
+        echo "create boot partition"
+        parted -s $efispath mkpart primary ext4 1544MiB 2056MiB &&
+    fi
+}
+
+function raptor_disks_prep_efis_form() {
+
+    echo "format efi path : $efispath"
+    if [[ ! -z $( lsblk -o path | grep $efispath ) ]];then
+        echo "format boot partition"
+        mkfs.vfat -F32 -n EFIS -s 4096 $efispath  
+    fi
+}
+
+function raptor_disks_prep_efis() {
+    raptor_disks_prep_efis_make
+    raptor_disks_prep_efis_form
+}
+
+## PROC PARTITION
 function raptor_disks_prep_proc_make() {
     echo "make root path : $procpath"
 
     if [[ -z $( lsblk -o path | grep $procpath ) ]];then
         echo "create proc partition"
-        parted -s $drivpath mkpart primary ext4 2000MiB 27000MiB
+        parted -s $drivpath mkpart primary ext4 2056MiB 27056MiB
     fi
 }
 
@@ -106,6 +132,48 @@ function raptor_disks_prep_proc() {
     raptor_disks_prep_proc_form
 }
 
+## SWAP PARTITION
+function raptor_disks_prep_swap_make() {
+    echo "make swap partition : $swappath"
+
+    if [[ -z $( lsblk -o path | grep $swappath ) ]];then
+        echo "create swap partition"
+        parted -s $drivpath mkpart primary ext4 27056MiB 31168MiB
+    fi
+}
+
+function raptor_disks_prep_swap_form() {
+    echo "format swap partition : $swappath"
+    if [[ ! -z $( lsblk -o path | grep $swappath ) ]];then
+        echo "format swap partition"
+        mkswap $swappath && swapon  $swappath
+    fi
+}
+
+function raptor_disks_prep_swap() {
+    echo "prep swap partition"
+    raptor_disks_prep_proc_make
+    raptor_disks_prep_proc_form
+}
+
+## HOME PARTITION
+function raptor_disks_prep_home_make() {
+    echo "make root path : $procpath"
+
+    if [[ -z $( lsblk -o path | grep $procpath ) ]];then
+        echo "create proc partition"
+        parted -s $drivpath mkpart primary ext4 0% 100%
+    fi
+}
+
+function raptor_disks_prep_home_form() {
+    echo "format root path : $homepath"
+    if [[ ! -z $( lsblk -o path | grep $homepath ) ]];then
+        echo "format proc partition"
+        mkfs.ext4 -S 4096 -L HOME $homepath  
+    fi
+}
+
 function raptor_disks_prep_home() {
     echo "prep home partition"
 }
@@ -114,9 +182,12 @@ function raptor_disks_prep() {
 
     sleep 2 && clear
     echo "Partition installation"
-    
+    raptor_disks_prep_dual
+    raptor_disks_prep_swip
     raptor_disks_prep_boot
+    raptor_disks_prep_efis
     raptor_disks_prep_proc
+    raptor_disks_prep_swap
     raptor_disks_prep_home
     exit
 }
