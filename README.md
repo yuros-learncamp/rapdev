@@ -13,5 +13,5 @@ test -d "/install" && rm /install
 git clone https://github.com/almuhdilkarim/testing.git /install
 ```
 ```
-/bin/bash /install/installer -install --profile default
+/bin/bash /install/installer --install --profile default
 ```
