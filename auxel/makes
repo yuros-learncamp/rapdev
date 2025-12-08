@@ -84,7 +84,7 @@ function raptor_disks_prep_boot() {
 function raptor_disks_prep_proc_make() {
     if [[ -z $( lsblk -o path | grep $procpath )  ]];then
         echo "create proc partition"
-        parted -s $drivpath mkpart primary ext4 2001MiB 27000MiB
+        parted -s $drivpath mkpart primary ext4 2000MiB 27000MiB
     fi
 }
 
