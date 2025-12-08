@@ -22,12 +22,9 @@ function raptor_disks_prep_boot_vali() {
 }
 
 function raptor_disks_prep_boot_form() {
-    if [[ ! -z $( lsblk | grep $bootpath ) ]];then
+    if [[ ! -z $( lsblk -o path | grep $bootpath ) ]];then
         echo "format boot partition"
         mkfs.ext4 -S 4096 -L BOOT $bootpath  
-    else
-        echo "boot partition not found"
-        exit 1
     fi
 }
 
