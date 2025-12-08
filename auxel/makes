@@ -114,6 +114,7 @@ function raptor_disks_prep() {
     raptor_disks_prep_boot
     raptor_disks_prep_proc
     raptor_disks_prep_home
+    exit
 }
 
 
