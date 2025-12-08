@@ -1,0 +1,14 @@
+linux-zen
+mkinitcpio
+sbctl
+openssh
+pipewire
+wireplumber
+pipewire-audio
+sof-firmware
+alsa-firmware
+pipewire-pulse
+pipewire-jack
+firewalld
+rsync
+steam

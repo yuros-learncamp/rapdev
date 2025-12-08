@@ -1,0 +1,269 @@
+#!/bin/bash
+
+## dualboot validator team # @Al Muhdil Karim <karim@yuros.org> @Fawaz Rifqi Frasetia <fras@yuros.org>
+function raptor_disks_prep_boot_vali() {
+
+    take_efipath=($(lsblk -o path,fstype | grep vfat | awk '{print $1}'))
+
+    for item_efipath in "${take_efipath[@]}"; do
+
+        echo "check efi partition at $item_efipath" 
+        sudo mount $item_efipath /srv && sleep 2 && 
+       
+        if [[ -d "/srv/EFI/Microsoft" ]]; then
+            winefipath="$item_efipath" && mkdir -p "$item_efipath/Linux" &&
+            echo "check windows efi partition found at $item_efipath"
+            dualboot=true
+        fi
+
+        sleep 1 && sudo umount -R /srv && sleep 2
+
+    done
+}
+
+function raptor_disks_prep_boot_mono() {
+    echo "set efi at linux only partition" 
+}
+
+## dualboot team @Al Muhdil Karim <karim@yuros.org>, @Achmad Baihaqi <achmad@yuros.org>, @Ibnu Dzaky Solihin <dzaky@yuros.org>
+function raptor_disks_prep_boot_dual() {
+    echo "set efi for dualboot partitions" 
+
+    ## create boot partition
+
+    ## format boot partition to ext4
+
+    ## mount boot partition to /mnt/boot
+
+    ## create efi directory on /boot
+
+    ## mount windows partition to /boot/efi
+
+}
+
+function raptor_disks_prep_boot() {
+
+    raptor_disks_prep_boot_vali
+
+    if [[ $dualboot == true ]];then
+        raptor_disks_prep_boot_dual
+    else
+        raptor_disks_prep_boot_mono        
+    fi
+}
+
+function raptor_disks_prep_proc() {
+    echo "prep proc partition"
+}
+
+function raptor_disks_prep_home() {
+    echo "prep home partition"
+}
+
+function raptor_disks_prep() {
+
+    sleep 2 && clear
+    echo "Partition installation"
+    
+    raptor_disks_prep_boot
+    raptor_disks_prep_proc
+    raptor_disks_prep_home
+}
+
+
+function raptor_cores_prep_mulibs() {
+
+    if [[ -n $distro_libs32 ]]&&[[ $distro_libs32 == true ]];then
+        echo "multilib true"
+        #echo "" >>  "/etc/pacman.conf" &&
+        #echo "[multilib]" >> "/etc/pacman.conf" &&
+        #echo "Include = /etc/pacman.d/mirrorlist" >> "/etc/pacman.conf"
+    fi
+}
+
+function raptor_cores_prep_pacmir() {
+    #test -e $pack_pacman && pacstrap -U /mnt - < $pack_pacman
+    test -e $pack_pacman && cat $pack_pacman  
+}
+
+function raptor_cores_prep() {
+    
+    sleep 2 && clear
+    echo "Base module installation"
+    
+    raptor_cores_prep_mulibs &&
+    raptor_cores_prep_pacmir 
+}
+
+function raptor_kerns_prep() {
+    sleep 2 && clear
+    echo "Kernel module installation"
+}
+
+function raptor_boots_prep() {
+    sleep 2 && clear
+    echo "Booting module installation"
+}
+
+function raptor_neter_prep_conf() {
+    cp "/etc/systemd/network"* "/etc/systemd/network"
+    test -e "/var/lib/iwd/"* && cp "/var/lib/iwd/"*.psk "/var/lib/iwd/"
+}
+
+function raptor_neter_prep() {
+    sleep 2 && clear
+    echo "Network module installation"
+}
+
+function raptor_audio_prep() {
+    sleep 2 && clear
+    echo "Audio module installation"
+}
+
+function raptor_deskt_prep() {
+    sleep 2 && clear
+    echo "Desktop module installation"
+}
+
+function raptor_mitig_prep() {
+    sleep 2 && clear
+    echo "Mitigation module installation"
+}
+
+function raptor_secur_prep() {
+    sleep 2 && clear
+    echo "Security module installation"
+}
+
+function raptor_distr_prep() {
+    sleep 2 && clear
+    echo "Distro module installation"
+}
+
+function raptor_disks_post() {
+    sleep 2 && clear
+    echo "Partition configuration"
+}
+
+function raptor_kerns_post() {
+    sleep 2 && clear
+    echo "Kernel module configuration"
+}
+
+function raptor_boots_post_prep() {
+    test -e /mnt/boot/*-ucode.img && mv /mnt/boot/*-ucode.img /boot/kernel/ 
+    test -e /mnt/boot/vmlinuz-*   && mv /mnt/boot/vmlinuz-*  /boot/kernel/ 
+    test -e /mnt/boot/initramfs*  && rm -f /mnt/boot/initramfs*
+}
+
+## boot loader @al muhdil karim <karim@yuros.org>, @achmad baihaqi <achmad@yuros.org>, @ibnu dzaky <dzaky@yuros.org>
+function raptor_boots_post_init() {
+    arch-chroot /mnt "bootctl --path=/boot/efi install"
+}
+
+function raptor_boots_post() {
+    sleep 2 && clear
+    echo "Booting module configuration"
+}
+
+function craine_cores_post_base() {
+
+    if [[ $hostaname ]];then
+        echo "$hostaname" > /mnt/etc/hostname 
+    else
+        echo "$ID" > /mnt/etc/hostname 
+    fi
+    locale-gen
+}
+
+function raptor_cores_post_time() {
+    arch-chroot /mnt ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
+    arch-chroot /mnt hwclock --systohc
+    arch-chroot /mnt timedatectl set-ntp true
+    arch-chroot /mnt timedatectl set-timezone $timezone 
+}
+
+function raptor_cores_post() {
+    sleep 2 && clear
+    echo "Base module configuration"
+    #craine_cores_post_base
+    #raptor_cores_post_time
+}
+
+function raptor_audio_post_serve() {
+    arch-chroot /mnt systemctl enable --global pipewire-pulse.service
+}
+
+function raptor_audio_post() {
+    sleep 2 && clear
+    echo "Audio module configuration"
+}
+
+function raptor_deskt_post() {
+    sleep 2 && clear
+    echo "Desktop module configuration"
+}
+
+function raptor_mitig_post() {
+    sleep 2 && clear
+    echo "Mitigation module configuration"
+}
+
+function raptor_neter_post_serve() {
+    arch-chroot /mnt systemctl enable sshd
+}
+
+function raptor_neter_post() {
+
+    sleep 2 && clear
+    echo "Network module configuration"
+    #raptor_network_post_service
+}
+
+function raptor_secur_post() {
+    sleep 2 && clear
+    echo "Security module configuration"
+}
+
+function raptor_distr_post() {
+    sleep 2 && clear
+    echo "Distro module configuration"
+}
+
+function raptor_prep_install() {
+    raptor_disks_prep
+    raptor_cores_prep
+    raptor_kerns_prep
+    raptor_boots_prep
+    raptor_neter_prep
+    raptor_audio_prep
+    raptor_deskt_prep
+    raptor_mitig_prep
+    raptor_secur_prep
+    raptor_distr_prep
+}
+
+function raptor_post_install() {
+    raptor_cores_post
+    raptor_disks_post
+    raptor_kerns_post
+    raptor_boots_post
+    raptor_neter_post
+    raptor_audio_post
+    raptor_deskt_post
+    raptor_mitig_post
+    raptor_secur_post
+    raptor_distr_post
+}
+
+function raptor_post_finishe() {
+    echo "finish installation" 
+    #mkinitcpio -P &&
+    #umount -R /mnt
+}
+
+function raptor_makes() {
+    raptor_prep_install &&
+    raptor_post_install &&
+    raptor_post_finishe
+}

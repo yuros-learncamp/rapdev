@@ -1,0 +1,10 @@
+NAME="Creamy OS"
+PRETTY_NAME="Creamy OS"
+ID=creamy
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://creamy.yuros.org"
+DOCUMENTATION_URL="https://creamy.yuros.org/docs"
+SUPPORT_URL="https://creamy.yuros.org/forum"
+BUG_REPORT_URL="https://creamy.yuros.org/issues"
+PRIVACY_POLICY_URL="https://creamy.yuros.org/privacy"
+LOGO=falcone-linux
