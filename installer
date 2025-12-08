@@ -20,5 +20,5 @@ fi
 
 
 if [[ $1 == "--install" ]];then
-    raptor_procmode="puref" && raptor_makes
+    raptor_procmode="puref" && raptor_makes $3
 fi
