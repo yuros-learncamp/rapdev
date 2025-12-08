@@ -21,9 +21,9 @@ function raptor_disks_prep_boot_vali() {
     done
 }
 
-
 function raptor_disks_prep_boot_form() {
-    if [[ -z $( lsblk | grep $bootpath )  ]];then
+    if [[ ! -z $( lsblk | grep $bootpath ) ]];then
+        echo "format boot partition"
         mkfs.ext4 -S 4096 -L BOOT $bootpath  
     else
         echo "boot partition not found"
@@ -31,18 +31,16 @@ function raptor_disks_prep_boot_form() {
     fi
 }
 
-
 function raptor_disks_prep_boot_make() {
     if [[ -z  $(lsblk | grep $bootpath )  ]];then
         echo "create boot partition"
-        sudo parted -s $drivpath mkpart primary ext4 1MiB 2000MiB
+        parted -s $drivpath mkpart primary ext4 1MiB 2000MiB
     fi
 }
 
-
 function raptor_disks_prep_boot_mgpt() {
 
-    if [[ -z $( lsblk | grep $bootpath )  ]];then
+    if [[ -z $( lsblk | grep $bootpath ) ]]&&[[ $dualboot == false ]];then
 
         read -p "Do yout want swipe partition table : [y/N] " swipe_partition_table
 
@@ -52,15 +50,12 @@ function raptor_disks_prep_boot_mgpt() {
     fi
 }
 
-
 function raptor_disks_prep_boot_mono() {
     echo "set efi at linux only partition"
     raptor_disks_prep_boot_mgpt &&
     raptor_disks_prep_boot_make &&
     raptor_disks_prep_boot_form
 }
-
-
 
 ## dualboot team @Al Muhdil Karim <karim@yuros.org>, @Achmad Baihaqi <achmad@yuros.org>, @Ibnu Dzaky Solihin <dzaky@yuros.org>
 function raptor_disks_prep_boot_dual() {
@@ -78,7 +73,6 @@ function raptor_disks_prep_boot_dual() {
 
 }
 
-
 function raptor_disks_prep_boot() {
 
     raptor_disks_prep_boot_vali
@@ -90,8 +84,28 @@ function raptor_disks_prep_boot() {
     fi
 }
 
+function raptor_disks_prep_proc_make() {
+    if [[ -z  $(lsblk | grep $procpath )  ]];then
+        echo "create proc partition"
+        parted -s $drivpath mkpart primary ext4 2001MiB 27000MiB
+    fi
+}
+
+function raptor_disks_prep_proc_form() {
+
+    if [[ ! -z $( lsblk | grep $procpath ) ]];then
+        echo "format boot partition"
+        mkfs.ext4 -S 4096 -L BOOT $bootpath  
+    else
+        echo "boot partition not found"
+        exit 1
+    fi
+}
+
 function raptor_disks_prep_proc() {
     echo "prep proc partition"
+    raptor_disks_prep_proc_make
+    raptor_disks_prep_proc_form
 }
 
 function raptor_disks_prep_home() {
