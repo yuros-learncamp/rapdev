@@ -8,5 +8,5 @@ git clone https://github.com/almuhdilkarim/testing.git /install
 ```
 
 ```
-/bin/bash /install/installer --profile default
+/bin/bash /install/installer -install --profile default
 ```
