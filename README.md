@@ -1,2 +1,6 @@
 # Raptor Operating System Devtest
-testing karim
+
+
+```
+git clone https://github.com/almuhdilkarim/testing.git
+```
