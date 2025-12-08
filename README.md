@@ -1,8 +1,11 @@
 # Raptor Operating System Devtest
 
+## preparation
 ```
 pacman -Syu git &&
 ```
+
+## operation
 ```
 test -d "/install" && rm /install
 ```
