@@ -21,9 +21,46 @@ function raptor_disks_prep_boot_vali() {
     done
 }
 
-function raptor_disks_prep_boot_mono() {
-    echo "set efi at linux only partition" 
+
+function raptor_disks_prep_boot_form() {
+    if [[ -z $( lsblk | grep $bootpath )  ]];then
+        mkfs.ext4 -S 4096 -L BOOT $bootpath  
+    else
+        echo "boot partition not found"
+        exit 1
+    fi
 }
+
+
+function raptor_disks_prep_boot_make() {
+    if [[ -z  $(lsblk | grep $bootpath )  ]];then
+        echo "create boot partition"
+        sudo parted -s $drivpath mkpart primary ext4 1MiB 2000MiB
+    fi
+}
+
+
+function raptor_disks_prep_boot_mgpt() {
+
+    if [[ -z $( lsblk | grep $bootpath )  ]];then
+
+        read -p "Do yout want swipe partition table : [y/N] " swipe_partition_table
+
+        if [[ $swipe_partition_table == "Y" ]]||[[ $swipe_partition_table == "y" ]];then
+            sudo parted -s $drivpath mklabel gpt
+        fi
+    fi
+}
+
+
+function raptor_disks_prep_boot_mono() {
+    echo "set efi at linux only partition"
+    raptor_disks_prep_boot_mgpt &&
+    raptor_disks_prep_boot_make &&
+    raptor_disks_prep_boot_form &&
+}
+
+
 
 ## dualboot team @Al Muhdil Karim <karim@yuros.org>, @Achmad Baihaqi <achmad@yuros.org>, @Ibnu Dzaky Solihin <dzaky@yuros.org>
 function raptor_disks_prep_boot_dual() {
@@ -40,6 +77,7 @@ function raptor_disks_prep_boot_dual() {
     ## mount windows partition to /boot/efi
 
 }
+
 
 function raptor_disks_prep_boot() {
 
