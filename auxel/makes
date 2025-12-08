@@ -29,7 +29,7 @@ function raptor_disks_prep_boot_form() {
 }
 
 function raptor_disks_prep_boot_make() {
-    if [[ -z  $(lsblk | grep $bootpath )  ]];then
+    if [[ -z  $( lsblk -o path | grep $bootpath )  ]];then
         echo "create boot partition"
         parted -s $drivpath mkpart primary ext4 1MiB 2000MiB
     fi
