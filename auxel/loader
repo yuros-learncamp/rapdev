@@ -43,4 +43,4 @@ cat $pack_pacmir >> $pack_pacman
 
 
 ## PROFILING
-test -e $buildprof/$3" && source "$buildprof/$3" 
+test -e "$buildprof/$3" && source "$buildprof/$3" 
