@@ -90,7 +90,7 @@ function raptor_disks_prep_efis_make() {
     echo "make efi path : $efispath"
     if [[ -z  $( lsblk -o path | grep $efispath )  ]];then
         echo "create boot partition"
-        parted -s $efispath mkpart primary ext4 1544MiB 2056MiB &&
+        parted -s $efispath mkpart primary ext4 1544MiB 2056MiB
     fi
 }
 
@@ -146,7 +146,7 @@ function raptor_disks_prep_swap_form() {
     echo "format swap partition : $swappath"
     if [[ ! -z $( lsblk -o path | grep $swappath ) ]];then
         echo "format swap partition"
-        mkswap $swappath && swapon  $swappath
+        mkswap $swappath && swapon $swappath
     fi
 }
 
