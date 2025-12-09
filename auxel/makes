@@ -157,8 +157,11 @@ function raptor_disks_form_swap() {
 }
 
 function raptor_disks_form_home() {
-    echo "format home partition"
-    mkfs.ext4 -F -q -b 4096 -L "HOME" $homepath
+
+    if [[ $raptor_procmode != "--reset" ]]; then
+        echo "format home partition"
+        mkfs.ext4 -F -q -b 4096 -L "HOME" $homepath
+    fi
 }
 
 function raptor_disks_form() {
