@@ -52,6 +52,8 @@ function raptor_disks_prep_make_uefi() {
         sleep 2
         uefipath=$(lsblk -o path | tail -n 1)
         sleep 1
+    else
+        uefipath=$(lsblk -o path,label | grep "UEFI" | awk '{print $1}')
     fi
 }
 
@@ -63,6 +65,8 @@ function raptor_disks_prep_make_boot() {
         sleep 2
         bootpath=$(lsblk -o path | tail -n 1)
         sleep 1
+    else
+        bootpath=$(lsblk -o path,label | grep "BOOT" | awk '{print $1}')
     fi
 }
 
@@ -74,6 +78,8 @@ function raptor_disks_prep_make_root() {
         sleep 2
         rootpath=$(lsblk -o path | tail -n 1)
         sleep 1
+    else
+        rootpath=$(lsblk -o path,label | grep "ROOT" | awk '{print $1}')
     fi
 }
 
@@ -85,6 +91,8 @@ function raptor_disks_prep_make_swap() {
         sleep 2
         swappath=$(lsblk -o path | tail -n 1)
         sleep 1
+    else
+        swappath=$(lsblk -o path,swap | awk '{print $1}')
     fi
 }
 
@@ -96,6 +104,8 @@ function raptor_disks_prep_make_home() {
         sleep 2
         homepath=$(lsblk -o path | tail -n 1)
         sleep 1
+    else
+        homepath=$(lsblk -o path,label | grep "HOME" | awk '{print $1}')
     fi
 }
 
