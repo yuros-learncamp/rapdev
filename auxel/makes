@@ -50,9 +50,15 @@ function raptor_disks_init() {
 ## MAKE PARTITION
 function raptor_disks_make_uefi() {
 
-    if [[ -z $( lsblk -o label | grep "UEFI" ) ]]; then
+    if [[ -z $( lsblk -o label | grep "UEFI" ) ]]&&[[ $dualboot == true ]]; then
         echo "create uefi"
         echo -e "n\np\n\n\n+1G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
+        sleep 2
+        uefipath=$(lsblk -o path | tail -n 1)
+        sleep 1
+    elif [[ -z $( lsblk -o label | grep "UEFI" ) ]]&&[[ $dualboot == false ]]; then
+        echo "create uefi"
+        echo -e "n\np\n\n\n+2G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
         uefipath=$(lsblk -o path | tail -n 1)
         sleep 1
@@ -64,13 +70,13 @@ function raptor_disks_make_uefi() {
 
 function raptor_disks_make_boot() {
 
-    if [[ -z $( lsblk -o label | grep "BOOT" ) ]]; then
+    if [[ -z $( lsblk -o label | grep "BOOT" ) ]]&&[[ $dualboot == true ]]; then
         echo "create boot"
         echo -e "n\np\n\n\n+1G\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
         bootpath=$(lsblk -o path | tail -n 1)
         sleep 1
-    else
+    elif [[ $dualboot == true ]];then
         echo "prepare boot"
         bootpath=$(lsblk -o path,label | grep "BOOT" | awk '{print $1}')
     fi
@@ -169,15 +175,24 @@ function raptor_disks_mont_root() {
 }
 
 function raptor_disks_mont_boot() {
-    echo "mount boot partition"
-    mount $bootpath /mnt/boot &&
-    mkdir -p /mnt/boot/{efi,kernel,loader}
+
+    if [[ $dualboot == true ]];then
+        echo "mount boot partition"
+        mount $bootpath /mnt/boot &&
+        mkdir -p /mnt/boot/{efi,kernel,loader}
+    fi
 }
 
 function raptor_disks_mont_uefi() {
     echo "mount uefi partition"
-    mount -o uid=0,gid=0,dmask=007,fmask=007 $uefipath /mnt/boot/efi
+    if [[ $dualboot == false ]];then
+        mount -o uid=0,gid=0,dmask=007,fmask=007 $uefipath /mnt/boot
+        mkdir -p /mnt/boot/{efi,kernel,loader}
+    else
+        mount -o uid=0,gid=0,dmask=007,fmask=007 $uefipath /mnt/boot/efi
+    fi
     mkdir -p /mnt/boot/efi/{boot,linux,systemd}
+     
 }
 
 function raptor_disks_mont_swap() {
