@@ -57,8 +57,7 @@ function raptor_disks_prep_make() {
         sleep 2
 
         echo "create home"
-        sector_home=$( parted -s "$drivpath" unit s print free | grep "Free Space" | head -n 2 | sed -n '2p' | awk '{print $1}' )
-        parted -s $drivpath mkpart primary ext4 $sector_home 100% > /dev/null 2>&1
+        echo -e "n\np\n\n\n\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
     fi
 }
