@@ -37,9 +37,9 @@ function raptor_disks_prep_swip() {
 ## MAKE PARTITION
 function raptor_disks_prep_make() {
     echo "make efi path : $efispath"
-    if [[ -z  $( lsblk -o path | grep $efispath )  ]];then
+    if [[ -z  $( lsblk -o path | grep $efispath ) ]];then
         echo "create efi partition"
-        parted -s --align=optimal "$drivpath" mkpart primary fat32 1MiB 1GB
+        parted -s --align=optimal "$drivpath" mkpart primary fat32 0% 1GB
         parted -s $drivpath set 1 esp on 
         parted -s $drivpath set 1 boot on
         parted -s $drivpath mkpart primary ext4 1GB 2GB
