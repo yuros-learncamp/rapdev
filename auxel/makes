@@ -74,7 +74,7 @@ function raptor_disks_make_boot() {
         echo "create boot"
         echo -e "n\np\n\n\n+2G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
-        bootpath=$(lsblk -o path | tail -n 1)
+        bootpath=$(lsblk -o path | grep "$drivpath" | tail -n 1)
         sleep 1
     else
         echo "prepare boot"
@@ -88,7 +88,7 @@ function raptor_disks_make_root() {
         echo "create root"
         echo -e "n\np\n\n\n+27G\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
-        rootpath=$(lsblk -o path | tail -n 1)
+        rootpath=$(lsblk -o path | grep "$drivpath" | tail -n 1)
         sleep 1
     else
         echo "prepare root"
@@ -102,7 +102,7 @@ function raptor_disks_make_swap() {
         echo "create swap"
         echo -e "n\np\n\n\n+4G\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
-        swappath=$(lsblk -o path | tail -n 1)
+        swappath=$(lsblk -o path | grep "$drivpath" | tail -n 1)
         sleep 1
     else
         echo "prepare swap"
@@ -116,7 +116,7 @@ function raptor_disks_make_home() {
         echo "create home"
         echo -e "n\np\n\n\n\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
-        homepath=$(lsblk -o path | tail -n 1)
+        homepath=$(lsblk -o path | grep "$drivpath" | tail -n 1)
         sleep 1
     else
         echo "prepare home"
@@ -143,7 +143,7 @@ function raptor_disks_form_uefi() {
 
 function raptor_disks_form_boot() {
     echo "format boot partition"
-    mkfs.vfat -F32 -S 4096 -n "BOOT" "$bootpath"
+    mkfs.vfat -F32 -S 4096 -n "BOOT" $bootpath
 }
 
 function raptor_disks_form_root() {
