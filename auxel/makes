@@ -93,7 +93,7 @@ function raptor_disks_make_root() {
 
 function raptor_disks_make_swap() {
     
-    if [[ -z $( lsblk -o label | grep "SWAP" ) ]]; then
+    if [[ -z $( lsblk -o path,fstype | grep "swap" ) ]]; then
         echo "create swap"
         echo -e "n\np\n\n\n+4G\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
