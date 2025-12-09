@@ -355,7 +355,7 @@ function raptor_boots_post_init() {
     echo "kernel parameter boot configuration"
     echo "root=$rootpath" > /mnt/etc/cmdline.d/01-boot.conf && 
     echo "installation systemd boot"
-    bootctl --path=/mnt/boot install
+    bootctl --path=/mnt/boot/efi install
 }
 
 function raptor_boots_post() {
