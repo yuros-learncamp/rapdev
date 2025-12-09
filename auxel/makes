@@ -266,8 +266,7 @@ function raptor_kerns_prep() {
     
     sleep 2 && clear
     echo "Kernel module installation"
-
-    # raptor_kerns_prep_install
+    raptor_kerns_prep_install
 }
 
 
