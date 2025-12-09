@@ -337,7 +337,7 @@ function raptor_cores_post_user() {
     
     echo "create user password"
     echo "#!/bin/bash" > /mnt/createuser &&
-    echo "echo $makeuser:$makepass | chpasswd" >> /mnt/createuser &&
+    echo "echo $username:$password | chpasswd" >> /mnt/createuser &&
     arch-chroot /mnt /bin/bash createuser &&
     rm /mnt/createuser
     sleep 3
