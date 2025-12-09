@@ -116,7 +116,7 @@ function raptor_disks_make_home() {
         echo "create home"
         echo -e "n\np\n\n\n\nw" | fdisk "$drivpath" > /dev/null 2>&1
         sleep 2
-        homepath=$(lsblk -o path | grep "$drivpath" | tail -n 1)
+        homepath=$(lsblk -o path | grep "$drivpath" | tail -n 1 )
         sleep 1
     else
         echo "prepare home"
