@@ -22,5 +22,6 @@ git
 neovim
 polkit
 less
+wget
 rsync
 steam
