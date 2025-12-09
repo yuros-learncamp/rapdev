@@ -225,14 +225,21 @@ function raptor_cores_prep_pacmir() {
     test -e $pack_pacman && pacstrap /mnt - < $pack_pacman
 }
 
+
+function craine_cores_post_config() {
+    genfstab -U /mnt > /mnt/etc/fstab &&
+    cp -fr $buildconf/* /mnt
+}
+
+
 function raptor_cores_prep() {
     
     sleep 2 && clear
     echo "Base module installation"
     
     raptor_cores_prep_mulibs &&
-    raptor_cores_prep_pacmir 
-    exit
+    raptor_cores_prep_pacmir &&
+    craine_cores_post_config
 }
 
 function raptor_kerns_prep() {
@@ -299,6 +306,7 @@ function raptor_boots_post_prep() {
 
 ## boot loader @al muhdil karim <karim@yuros.org>, @achmad baihaqi <achmad@yuros.org>, @ibnu dzaky <dzaky@yuros.org>
 function raptor_boots_post_init() {
+    echo "root=$rootpath" > /etc/cmdline.d/01-boot.conf && 
     arch-chroot /mnt "bootctl --path=/boot/efi install"
 }
 
@@ -308,6 +316,8 @@ function raptor_boots_post() {
     raptor_boots_post_prep
     raptor_boots_post_init
 }
+
+
 
 function craine_cores_post_base() {
 
