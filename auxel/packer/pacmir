@@ -10,7 +10,8 @@ alsa-firmware
 pipewire-pulse
 pipewire-jack
 plasma-meta
-sddm 
+qt5-declarative
+sddm
 firewalld
 base
 base-devel
