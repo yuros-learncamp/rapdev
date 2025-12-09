@@ -3,7 +3,8 @@ mkinitcpio
 sbctl
 networkmanager
 dnsmasq
-opensshpipewire
+openssh
+pipewire
 wireplumber
 pipewire-audio
 sof-firmware
