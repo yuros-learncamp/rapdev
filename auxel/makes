@@ -211,9 +211,9 @@ function raptor_disks_prep() {
 
 function raptor_cores_prep_mulibs() {
 
-    ismultilib=$(cat /etc/pacman.conf | grep "#[multilib]")
+    local ismultilib=$(cat /etc/pacman.conf | grep "#[multilib]")
 
-    if [[ -n $distro_libs32 ]]&&[[ $distro_libs32 == true ]]&&[[ -z $ismultilib ]];then
+    if [[ -n $distro_libs32 ]]&&[[ $distro_libs32 == true ]]&&[[ -n $ismultilib ]];then
         echo "" >>  "/etc/pacman.conf" &&
         echo "[multilib]" >> "/etc/pacman.conf" &&
         echo "Include = /etc/pacman.d/mirrorlist" >> "/etc/pacman.conf"
