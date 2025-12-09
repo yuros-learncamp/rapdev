@@ -5,13 +5,6 @@ function raptor_disks_prep_pure_mont() {
     umount -R /mnt > /dev/null 2>&1
 }
 
-function raptor_disks_prep_pure_swap() {
-    swaplabel=$(lsblk -o path,mountpoint | grep "[SWAP]" | awk '{print $1}')
-    if [[ -n $swaplabel ]];then
-        swapoff $swaplabel
-    fi
-}
-
 function raptor_disks_prep_pure() {
     raptor_disks_prep_pure_mont
     raptor_disks_prep_pure_swap
