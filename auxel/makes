@@ -201,7 +201,7 @@ function raptor_disks_mont() {
 
 function raptor_disks_prep() {
 
-    clear && echo "Partition installation"
+    clear && echo "Partition configuration"
     raptor_disks_init &&
     raptor_disks_make &&
     raptor_disks_form &&
@@ -220,7 +220,7 @@ function raptor_cores_prep_mulibs() {
 }
 
 function raptor_cores_prep_pacmir() {
-    test -e $pack_pacman && pacstrap -U /mnt - < $pack_pacman
+    test -e $pack_pacman && pacstrap /mnt - < $pack_pacman
 }
 
 function raptor_cores_prep() {
