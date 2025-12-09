@@ -156,14 +156,14 @@ function raptor_disks_prep_mont_root() {
 
 function raptor_disks_prep_mont_boot() {
     echo "mount boot partition"
-    mount -o uid=0,gid=0,dmask=007,fmask=007 $bootpath /mnt/boot &&
+    mount $bootpath /mnt/boot &&
     mkdir -p /mnt/boot/{efi,kernel,loader}
     mkdir -p /mnt/boot/efi/{boot,linux,systemd}
 }
 
 function raptor_disks_prep_mont_uefi() {
     echo "mount uefi partition"
-    mount $uefipath /mnt/boot/efi
+    mount -o uid=0,gid=0,dmask=007,fmask=007 $uefipath /mnt/boot/efi
 }
 
 function raptor_disks_prep_mont_swap() {
