@@ -198,8 +198,8 @@ function raptor_disks_prep() {
     sleep 2 && clear
     echo "Partition installation"
     raptor_disks_prep_pure &&
-    raptor_disks_prep_dual &&
-    raptor_disks_prep_swip &&
+    #raptor_disks_prep_dual &&
+    #raptor_disks_prep_swip &&
     raptor_disks_prep_make &&
     raptor_disks_prep_form &&
     raptor_disks_prep_mont
