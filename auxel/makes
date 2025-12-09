@@ -409,13 +409,14 @@ function raptor_neter_post() {
 }
 
 function raptor_secur_post_serve() {
-    arch-chroot /mnt "systemctl enable firewalld"
+    arch-chroot /mnt systemctl enable firewalld
 }
 
 function raptor_secur_post() {
     sleep 2 && clear
     echo "Security module configuration"
     raptor_secur_post_serve
+    echo "Security module configured"
 }
 
 function raptor_distr_post() {
