@@ -211,7 +211,9 @@ function raptor_disks_prep() {
 
 function raptor_cores_prep_mulibs() {
 
-    if [[ -n $distro_libs32 ]]&&[[ $distro_libs32 == true ]];then
+    ismultilib=$(cat /etc/pacman.conf | grep "#[multilib]")
+
+    if [[ -n $distro_libs32 ]]&&[[ $distro_libs32 == true ]]&&[[ -z $ismultilib ]];then
         echo "" >>  "/etc/pacman.conf" &&
         echo "[multilib]" >> "/etc/pacman.conf" &&
         echo "Include = /etc/pacman.d/mirrorlist" >> "/etc/pacman.conf"
@@ -327,8 +329,8 @@ function raptor_cores_post_time() {
 function raptor_cores_post() {
     sleep 2 && clear
     echo "Base module configuration"
-    #craine_cores_post_base
-    #raptor_cores_post_time
+    craine_cores_post_base
+    raptor_cores_post_time
 }
 
 function raptor_audio_post_serve() {
