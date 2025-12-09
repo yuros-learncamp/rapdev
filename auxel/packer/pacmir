@@ -8,7 +8,14 @@ pipewire-audio
 sof-firmware
 alsa-firmware
 pipewire-pulse
-pipewire-jack
+pipewire-jackplasma-meta
+sddm 
 firewalld
-rsync
+base
+base-devel
+linux-firmare
+git
+neovim
+polkit
+lessrsync
 steam
