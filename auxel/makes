@@ -69,11 +69,11 @@ function raptor_disks_prep_auto() {
     
     if [[ -z $( lsblk -o path | grep $efispath ) ]]; then
         echo "starting auto partitioning"
-        raptor_disks_prep_make_uefi &&
-        raptor_disks_prep_make_boot &&
-        raptor_disks_prep_make_root &&
-        raptor_disks_prep_make_swap &&
-        raptor_disks_prep_make_home &&
+        raptor_disks_prep_auto_uefi &&
+        raptor_disks_prep_auto_boot &&
+        raptor_disks_prep_auto_root &&
+        raptor_disks_prep_auto_swap &&
+        raptor_disks_prep_auto_home &&
         partition_isready=true
     fi
 }
@@ -228,6 +228,7 @@ function raptor_disks_prep_home() {
 
 
 function raptor_disks_prep_conf() {
+    
     if [[ -z $partition_isready ]]; then
         raptor_disks_prep_efis &&
         raptor_disks_prep_boot && 
