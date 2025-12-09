@@ -34,38 +34,38 @@ function raptor_disks_prep_swip() {
 }
 
 
-## MAKE PARTITION
-function raptor_disks_prep_make_uefi() {
+## AUTO PARTITION
+function raptor_disks_prep_auto_uefi() {
     echo "create efis"
     echo -e "n\np\n\n\n+1G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
     sleep 2
 }
 
-function raptor_disks_prep_make_boot() {
+function raptor_disks_prep_auto_boot() {
     echo "create boot"
     echo -e "n\np\n\n\n+1G\nw" | fdisk "$drivpath" > /dev/null 2>&1
     sleep 2
 }
 
-function raptor_disks_prep_make_root() {
+function raptor_disks_prep_auto_root() {
     echo "create root"
     echo -e "n\np\n\n\n+27G\nw" | fdisk "$drivpath" > /dev/null 2>&1
     sleep 2
 }
 
-function raptor_disks_prep_make_swap() {
+function raptor_disks_prep_auto_swap() {
     echo "create swap"
     echo -e "n\np\n\n\n+4G\nw" | fdisk "$drivpath" > /dev/null 2>&1
     sleep 2
 }
 
-function raptor_disks_prep_make_home() {
+function raptor_disks_prep_auto_home() {
     echo "create home"
     echo -e "n\np\n\n\n\nw"    | fdisk "$drivpath" > /dev/null 2>&1
     sleep 2
 }
 
-function raptor_disks_prep_make() {
+function raptor_disks_prep_auto() {
     
     if [[ -z $( lsblk -o path | grep $efispath ) ]]; then
         echo "starting auto partitioning"
@@ -73,7 +73,8 @@ function raptor_disks_prep_make() {
         raptor_disks_prep_make_boot &&
         raptor_disks_prep_make_root &&
         raptor_disks_prep_make_swap &&
-        raptor_disks_prep_make_home
+        raptor_disks_prep_make_home &&
+        partition_isready=true
     fi
 }
 
@@ -226,6 +227,17 @@ function raptor_disks_prep_home() {
 }
 
 
+function raptor_disks_prep_conf() {
+    if [[ -z $partition_isready ]]; then
+        raptor_disks_prep_efis &&
+        raptor_disks_prep_boot && 
+        raptor_disks_prep_proc &&
+        raptor_disks_prep_swap &&
+        raptor_disks_prep_home
+    fi
+}
+
+
 function raptor_disks_prep() {
 
     sleep 2 && clear
@@ -233,19 +245,8 @@ function raptor_disks_prep() {
     
     raptor_disks_prep_dual &&
     raptor_disks_prep_swip &&
-    
-    if [[ -z $( lsblk -o path | grep $efispath )  ]];then
-        raptor_disks_prep_make
-    else
-        raptor_disks_prep_make &&
-        raptor_disks_prep_efis &&
-        raptor_disks_prep_boot && 
-        raptor_disks_prep_proc &&
-        raptor_disks_prep_swap &&
-        raptor_disks_prep_home
-    fi
-
-
+    raptor_disks_prep_auto &&
+    raptor_disks_prep_conf &&
     exit
 }
 
