@@ -339,8 +339,9 @@ function raptor_cores_post_user() {
     export makepass=$username
     export makeuser=$password
     echo $password
-    sleep 3
+    
     arch-chroot /mnt /bin/bash -c "echo $makeuser:$makepass | chpasswd"
+    sleep 3
 }
 
 function raptor_cores_post_srvc() {
