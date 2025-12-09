@@ -39,13 +39,15 @@ function raptor_disks_prep_make() {
     echo "make efi path : $efispath"
     if [[ -z  $( lsblk -o path | grep $efispath ) ]];then
         echo "create efi partition"
-        
+
+        partnumber=$(parted /dev/sda print | awk '{print $1}' | tail -n 2 | tr -d '[:space:]')
+        test -z $partnumber && partnumber=1
         echo "create efis"
         #sector_efis=$( parted -s "$drivpath" unit s print free | grep "Free Space" | head -n 2 | sed -n '2p' | awk '{print $1}'  )
         #parted -s --align=optimal "$drivpath" mkpart primary fat32 $sector_efis "+1GB"
         #parted -s $drivpath set 1 esp on 
         #parted -s $drivpath set 1 boot on
-        echo -e "n\nn\n\n\n+1G\nt\nw" | fdisk "$drivpath"
+        echo -e "n\n$partnumber\n\n\n+1G\nt\n$partnumber\n$partnumber\nw" | fdisk "$drivpath"
         sleep 2
 
         echo "create boot"
