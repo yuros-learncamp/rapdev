@@ -35,32 +35,49 @@ function raptor_disks_prep_swip() {
 
 
 ## MAKE PARTITION
+function raptor_disks_prep_make_uefi() {
+    echo "create efis"
+    echo -e "n\np\n\n\n+1G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
+    sleep 2
+}
+
+function raptor_disks_prep_make_boot() {
+    echo "create boot"
+    echo -e "n\np\n\n\n+1G\nw" | fdisk "$drivpath" > /dev/null 2>&1
+    sleep 2
+}
+
+function raptor_disks_prep_make_root() {
+    echo "create root"
+    echo -e "n\np\n\n\n+27G\nw" | fdisk "$drivpath" > /dev/null 2>&1
+    sleep 2
+}
+
+function raptor_disks_prep_make_swap() {
+    echo "create swap"
+    echo -e "n\np\n\n\n+4G\nw" | fdisk "$drivpath" > /dev/null 2>&1
+    sleep 2
+}
+
+function raptor_disks_prep_make_home() {
+    echo "create home"
+    echo -e "n\np\n\n\n\nw"    | fdisk "$drivpath" > /dev/null 2>&1
+    sleep 2
+}
+
 function raptor_disks_prep_make() {
-    echo "make efi path : $efispath"
-    if [[ -z  $( lsblk -o path | grep $efispath ) ]];then
-        echo "create efi partition"
-        
-        echo "create efis"
-        echo -e "n\np\n\n\n+1G\nt\n\n1\nw" | fdisk "$drivpath" > /dev/null 2>&1
-        sleep 2
-
-        echo "create boot"
-        echo -e "n\np\n\n\n+1G\nw" | fdisk "$drivpath" > /dev/null 2>&1
-        sleep 2
-
-        echo "create root"
-        echo -e "n\np\n\n\n+27G\nw" | fdisk "$drivpath" > /dev/null 2>&1
-        sleep 2
-
-        echo "create swap"
-        echo -e "n\np\n\n\n+4G\nw" | fdisk "$drivpath" > /dev/null 2>&1
-        sleep 2
-
-        echo "create home"
-        echo -e "n\np\n\n\n\nw" | fdisk "$drivpath" > /dev/null 2>&1
-        sleep 2
+    
+    if [[ -z $( lsblk -o path | grep $efispath ) ]]; then
+        echo "starting auto partitioning"
+        raptor_disks_prep_make_uefi &&
+        raptor_disks_prep_make_boot &&
+        raptor_disks_prep_make_root &&
+        raptor_disks_prep_make_swap &&
+        raptor_disks_prep_make_home
     fi
 }
+
+
 
 ## EFI PARTITION
 function raptor_disks_prep_efis_make() {
@@ -207,6 +224,7 @@ function raptor_disks_prep_home() {
     #raptor_disks_prep_home_make
     raptor_disks_prep_home_form
 }
+
 
 function raptor_disks_prep() {
 
