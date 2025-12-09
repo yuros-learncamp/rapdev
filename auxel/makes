@@ -33,7 +33,6 @@ function raptor_disks_prep_swip() {
     fi
 }
 
-
 ## MAKE PARTITION
 function raptor_disks_prep_make_uefi() {
     echo "create uefi"
@@ -88,7 +87,6 @@ function raptor_disks_prep_make() {
     fi
 }
 
-
 ## FORM PARTITION
 function raptor_disks_prep_form_uefi() {
     echo "format uefi partition"
@@ -124,22 +122,23 @@ function raptor_disks_prep_form() {
 }
 
 ## MONT PARTITION
-function raptor_disks_prep_mont_uefi() {
-    echo "mount uefi partition"
-    mount $uefipath /mnt/boot/efi
-}
-
-function raptor_disks_prep_mont_boot() {
-    echo "mount boot partition"
-    mount -o uid=0,gid=0,dmask=007,fmask=007 $bootpath /mnt/boot/
-    mkdir -p /mnt/boot/{efi,kernel,loader}
-    mkdir -p /mnt/boot/efi/{boot,linux,systemd}
-}
 
 function raptor_disks_prep_mont_root() {
     echo "mount root partition"
     mount $rootpath /mnt
     mkdir -p /mnt/{home,boot}
+}
+
+function raptor_disks_prep_mont_boot() {
+    echo "mount boot partition"
+    mount -o uid=0,gid=0,dmask=007,fmask=007 $bootpath /mnt/boot &&
+    mkdir -p /mnt/boot/{efi,kernel,loader}
+    mkdir -p /mnt/boot/efi/{boot,linux,systemd}
+}
+
+function raptor_disks_prep_mont_uefi() {
+    echo "mount uefi partition"
+    mount $uefipath /mnt/boot/efi
 }
 
 function raptor_disks_prep_mont_swap() {
@@ -153,170 +152,12 @@ function raptor_disks_prep_mont_home() {
 }
 
 function raptor_disks_prep_mont() {
-    raptor_disks_prep_mont_root
-    raptor_disks_prep_mont_boot
-    raptor_disks_prep_mont_uefi
-    raptor_disks_prep_mont_home
+    raptor_disks_prep_mont_root &&
+    raptor_disks_prep_mont_boot &&
+    raptor_disks_prep_mont_uefi &&
+    raptor_disks_prep_mont_home &&
     raptor_disks_prep_mont_swap
 }
-
-function raptor_disks_prep_efis_make() {
-
-    echo "make efi path : $efispath"
-    if [[ -z  $( lsblk -o path | grep $efispath )  ]];then
-        echo "create efi partition"
-        parted -s --align=optimal "$drivpath" fat32 1MiB 1GB
-        parted -s $drivpath set 1 esp on 
-        parted -s $drivpath set 1 boot on
-    fi
-}
-
-function raptor_disks_prep_efis_form() {
-
-    echo "format efi path : $efispath"
-    if [[ ! -z $( lsblk -o path | grep $efispath ) ]];then
-        echo "format boot partition"
-        mkfs.vfat -F32 $efispath  
-    fi
-}
-
-function raptor_disks_prep_efis() {
-    #raptor_disks_prep_efis_make
-    raptor_disks_prep_efis_form
-}
-
-## BOOT PARTITION
-function raptor_disks_prep_boot_form() {
-    echo "format boot path : $bootpath"
-    if [[ ! -z $( lsblk -o path | grep $bootpath ) ]];then
-        echo "format boot partition"
-        mkfs.ext4 -S 4096 -L BOOT $bootpath  
-    fi
-}
-
-function raptor_disks_prep_boot_make() {
-    echo "make boot path : $bootpath"
-    if [[ -z  $( lsblk -o path | grep $bootpath )  ]];then
-        echo "create boot partition"
-        parted -s $drivpath mkpart primary ext4 1GB 2GB
-    fi
-}
-
-function raptor_disks_prep_boot_mono() {
-    echo "set boot for linux only partition"
-    #raptor_disks_prep_boot_make
-    raptor_disks_prep_boot_form
-}
-
-## dualboot team @Al Muhdil Karim <karim@yuros.org>, @Achmad Baihaqi <achmad@yuros.org>, @Ibnu Dzaky Solihin <dzaky@yuros.org>
-function raptor_disks_prep_boot_dual() {
-    echo "set efi for dualboot partitions" 
-
-    ## create boot partition
-
-    ## format boot partition to ext4
-
-    ## mount boot partition to /mnt/boot
-
-    ## create efi directory on /boot
-
-    ## mount windows partition to /boot/efi
-
-}
-
-function raptor_disks_prep_boot() {
-
-    if [[ $dualboot == true ]];then
-        raptor_disks_prep_boot_dual
-    else
-        raptor_disks_prep_boot_mono        
-    fi
-}
-
-
-## PROC PARTITION
-function raptor_disks_prep_proc_make() {
-    echo "make root path : $procpath"
-    if [[ -z $( lsblk -o path | grep $procpath ) ]];then
-        echo "create proc partition"
-        parted -s $drivpath mkpart logical ext4 2GB 27GB
-    fi
-}
-
-function raptor_disks_prep_proc_form() {
-    echo "format root path : $procpath"
-    if [[ ! -z $( lsblk -o path | grep $procpath ) ]];then
-        echo "format proc partition"
-        mkfs.ext4 $procpath  
-    fi
-}
-
-function raptor_disks_prep_proc() {
-    echo "prep proc partition"
-    #raptor_disks_prep_proc_make
-    raptor_disks_prep_proc_form
-}
-
-## SWAP PARTITION
-function raptor_disks_prep_swap_make() {
-    echo "make swap partition : $swappath"
-
-    if [[ -z $( lsblk -o path | grep $swappath ) ]];then
-        echo "create swap partition"
-        parted -s $drivpath mkpart primary swap 27G 31GB
-    fi
-}
-
-function raptor_disks_prep_swap_form() {
-    echo "format swap partition : $swappath"
-    if [[ ! -z $( lsblk -o path | grep $swappath ) ]];then
-        echo "format swap partition"
-        mkswap $swappath && swapon $swappath
-    fi
-}
-
-function raptor_disks_prep_swap() {
-    echo "prep swap partition"
-    #raptor_disks_prep_swap_make
-    raptor_disks_prep_swap_form
-}
-
-## HOME PARTITION
-function raptor_disks_prep_home_make() {
-    echo "make root path : $procpath"
-
-    if [[ -z $( lsblk -o path | grep $procpath ) ]];then
-        echo "create proc partition"
-        parted -s $drivpath mkpart primary ext4 31GB 100%
-    fi
-}
-
-function raptor_disks_prep_home_form() {
-    echo "format root path : $homepath"
-    if [[ ! -z $( lsblk -o path | grep $homepath ) ]];then
-        echo "format proc partition"
-        mkfs.ext4 -S 4096 -L HOME $homepath  
-    fi
-}
-
-function raptor_disks_prep_home() {
-    echo "prep home partition"
-    #raptor_disks_prep_home_make
-    raptor_disks_prep_home_form
-}
-
-
-function raptor_disks_prep_conf() {
-
-    if [[ -z $partition_isready ]]; then
-        raptor_disks_prep_efis &&
-        raptor_disks_prep_boot && 
-        raptor_disks_prep_proc &&
-        raptor_disks_prep_swap &&
-        raptor_disks_prep_home
-    fi
-}
-
 
 function raptor_disks_prep() {
 
