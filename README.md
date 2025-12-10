@@ -1,4 +1,4 @@
-# Raptor Operating System Labroom 3
+# Raptor Operating System Labroom 1
 
 ## preparing
 ```
@@ -10,7 +10,7 @@ pacman -Syu git
 test -d "/install" && rm /install
 ```
 ```
-git clone https://github.com/yuros-learncamp/rogerlab3.git /install
+git clone https://github.com/yuros-learncamp/rogerlab1.git /install
 ```
 ```
 /bin/bash /install/installer --install --profile default

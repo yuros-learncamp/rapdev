@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="Creamy OS"
-iso_label="creamy_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
-iso_publisher="Creamy OS <https://blackroom.yuros.org/blezing>"
-iso_application="Creamy OS Recovery"
+iso_name="Falcone OS"
+iso_label="falcone_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_publisher="Falcone OS <https://blackroom.yuros.org/blezing>"
+iso_application="Falcone OS Recovery"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="arch"
 buildmodes=('iso')

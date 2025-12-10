@@ -112,6 +112,25 @@ function raptor_disks_make() {
     raptor_disks_make_home
 }
 
+## PREV PARTITION
+function raptor_disks_prev() {
+    
+    clear &&
+    echo "Storage Information preview"
+    echo "--------------------------------"
+    echo "boot path : $bootpath"
+    echo "root path : $rootpath"
+    echo "swap path : $swappath"
+    echo "home path : $homepath"
+    echo "--------------------------------"
+    read -p 'Type "YES" on capital letter to continue or "NO" to abort installation' confirmdiskpartition
+
+    if [[ $confirmdiskpartition != "YES" ]];then
+        echo "Proccess cancelation by user"
+        exit 1
+    fi
+} 
+
 ## FORM PARTITION
 function raptor_disks_form_boot() {
     echo "format boot partition"
@@ -178,6 +197,7 @@ function raptor_disks_prep() {
     clear && echo "Partition configuration"
     raptor_disks_init &&
     raptor_disks_make &&
+    raptor_disks_prev &&
     raptor_disks_form &&
     raptor_disks_mont &&
     echo "configration done"
@@ -221,9 +241,15 @@ function raptor_cores_prep() {
     craine_cores_post_config
 }
 
+function raptor_kerns_prep_pure() {
+    rm -f /mnt/etc/mkinitcpio.conf &&
+    rm -fr /mnt/etc/mkinitcpio.conf.d 
+}
+
 function raptor_kerns_prep() {
     sleep 2 && clear
     echo "Kernel module installation"
+    raptor_kerns_prep_pure
 }
 
 function raptor_boots_prep() {
@@ -254,11 +280,6 @@ function raptor_mitig_prep() {
 function raptor_secur_prep() {
     sleep 2 && clear
     echo "Security module installation"
-}
-
-function raptor_distr_prep() {
-    sleep 2 && clear
-    echo "Distro module installation"
 }
 
 function raptor_disks_post() {
@@ -392,9 +413,11 @@ function raptor_audio_post() {
 
 
 function raptor_deskt_post_serve() {
-    arch-chroot /mnt systemctl enable gdm
+    arch-chroot /mnt systemctl enable sddm
     arch-chroot /mnt systemctl enable bluetooth.service
 }
+
+
 
 function raptor_deskt_post() {
     sleep 2 && clear
@@ -429,11 +452,6 @@ function raptor_secur_post() {
     echo "Security module configuration"
     raptor_secur_post_serve
     echo "Security module configured"
-}
-
-function raptor_distr_post() {
-    sleep 2 && clear
-    echo "Distro module configuration"
 }
 
 function raptor_prep_install() {
