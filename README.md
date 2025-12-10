@@ -10,7 +10,7 @@ pacman -Syu git
 test -d "/install" && rm /install
 ```
 ```
-git clone https://github.com/almuhdilkarim/testing.git /install
+git clone https://github.com/yuros-learncamp/rogerlab3.git /install
 ```
 ```
 /bin/bash /install/installer --install --profile default
