@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="Falcone OS"
-iso_label="falcone_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
-iso_publisher="Falcone OS <https://blackroom.yuros.org/blezing>"
-iso_application="Falcone OS Recovery"
+iso_name="Tester 3"
+iso_label="tester3_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_publisher="Tester 3 <https://blackroom.yuros.org/blezing>"
+iso_application="Tester 3 Recovery"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="arch"
 buildmodes=('iso')
