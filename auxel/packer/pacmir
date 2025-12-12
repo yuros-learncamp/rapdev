@@ -15,10 +15,8 @@ pipewire-alsa
 lightdm
 xorg-server
 lightdm-deepin-greeter
-yakuake
 deepin
 deepin-kwin
-qt5-declarative
 bluez
 firewalld
 iptables-nft
