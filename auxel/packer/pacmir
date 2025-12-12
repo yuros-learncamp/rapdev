@@ -13,6 +13,7 @@ pipewire-pulse
 pipewire-jack
 pipewire-alsa
 lightdm
+lightdm-deepin-greeter
 yakuake
 deepin
 deepin-kwin
